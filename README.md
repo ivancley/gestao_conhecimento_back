@@ -1,36 +1,102 @@
 # Gestão de Conhecimento Backend API
 
-API RESTful moderna desenvolvida em Python com FastAPI, implementando arquitetura em camadas, RAG (Retrieval Augmented Generation), processamento assíncrono com Celery e integração com IA para análise e resumo de conteúdo web.
+Sistema de gestão de conhecimento que permite extrair, processar e consultar conteúdo de páginas web através de IA. O usuário envia um link, o sistema extrai o conteúdo, gera um resumo e disponibiliza um chat inteligente baseado em RAG para consultas sobre o material extraído.
 
 ---
 
-##  Índice
+## Funcionalidade Principal
 
+### Como Funciona
+
+O sistema oferece uma solução completa para transformar conteúdo web em conhecimento consultável:
+
+1. **Envio de Link**: O usuário envia um link de uma página da internet
+2. **Acesso e Extração**: O sistema acessa automaticamente a página e extrai todas as informações relevantes
+3. **Geração de Resumo**: Utilizando IA (GPT-4o-mini), o sistema cria um resumo inteligente do conteúdo extraído
+4. **Alimentação do RAG**: O conteúdo é processado, dividido em chunks e seus embeddings são gerados e armazenados em um banco vetorial (PostgreSQL com pgvector)
+5. **Chat Inteligente**: O RAG dá origem a um sistema de chat onde o usuário pode fazer perguntas sobre o conteúdo extraído e receber respostas precisas baseadas no contexto original
+
+### Fluxo Completo
+
+```
+┌─────────────┐
+│  Usuário    │
+│  envia link │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────────────┐
+│  Sistema acessa     │
+│  a página web       │
+└──────┬──────────────┘
+       │
+       ▼
+┌─────────────────────┐
+│  Extração de        │
+│  informações        │
+│  (texto, metadados) │
+└──────┬──────────────┘
+       │
+       ▼
+┌─────────────────────┐
+│  Geração de resumo  │
+│  com IA (GPT-4o)    │
+└──────┬──────────────┘
+       │
+       ▼
+┌─────────────────────┐
+│  Processamento e    │
+│  criação de chunks  │
+└──────┬──────────────┘
+       │
+       ▼
+┌─────────────────────┐
+│  Geração de         │
+│  embeddings e       │
+│  armazenamento no   │
+│  banco vetorial     │
+└──────┬──────────────┘
+       │
+       ▼
+┌─────────────────────┐
+│  Chat RAG           │
+│  Usuário faz        │
+│  perguntas sobre    │
+│  o conteúdo         │
+└─────────────────────┘
+```
+
+---
+
+## 📋 Índice
+
+- [Funcionalidade Principal](#-funcionalidade-principal)
 - [Visão Geral](#-visão-geral)
 - [Arquitetura e Padrões de Projeto](#-arquitetura-e-padrões-de-projeto)
 - [Stack Tecnológico](#-stack-tecnológico)
 - [Pré-requisitos](#-pré-requisitos)
 - [Instalação e Configuração](#-instalação-e-configuração)
-- [Funcionalidades Principais](#-funcionalidades-principais)
-- [Destaques Técnicos](#-destaques-técnicos)
+- [Funcionalidades Detalhadas](#-funcionalidades-detalhadas)
 - [API Endpoints](#-api-endpoints)
 - [Variáveis de Ambiente](#-variáveis-de-ambiente)
 - [Desenvolvimento](#-desenvolvimento)
 
 ---
 
-#  Visão Geral
+## 📖 Visão Geral
 
-Este projeto é uma API backend robusta e escalável que oferece:
+Este projeto é uma API backend robusta e escalável desenvolvida em Python com FastAPI que implementa:
 
-- **Gerenciamento de Usuários**: Sistema completo de autenticação JWT com refresh tokens, recuperação de senha e controle de permissões baseado em roles
-- **Web Scraping Inteligente**: Extração automatizada de conteúdo web com Selenium, processamento assíncrono e geração de resumos com IA
-- **RAG (Retrieval Augmented Generation)**: Sistema de busca semântica usando embeddings vetoriais (pgvector) e OpenAI para consultas inteligentes sobre conteúdo indexado
-- **Processamento Assíncrono**: Tarefas em background com Celery e Redis para scraping e processamento de dados
+- **Extração Inteligente de Conteúdo Web**: Web scraping automatizado com Selenium para páginas dinâmicas
+- **Processamento com IA**: Geração de resumos e análise de conteúdo usando GPT-4o-mini
+- **RAG (Retrieval Augmented Generation)**: Sistema de busca semântica usando embeddings vetoriais (pgvector) e OpenAI
+- **Chat Inteligente**: Interface de conversação que permite consultar o conteúdo extraído de forma natural
+- **Processamento Assíncrono**: Tarefas em background com Celery e Redis
+- **Arquitetura em Camadas**: Separação clara de responsabilidades para facilitar manutenção e testes
 
 ---
 
-##  Arquitetura e Padrões de Projeto
+## Arquitetura e Padrões de Projeto
 
 ### Arquitetura em Camadas (Layered Architecture)
 
@@ -38,7 +104,7 @@ O projeto segue uma arquitetura em camadas bem definida, garantindo separação 
 
 ```
 ┌─────────────────────────────────────┐
-│     Controller (API Layer) n        │  ← Recebe requisições HTTP
+│     Controller (API Layer)          │  ← Recebe requisições HTTP
 │     - Validação de entrada          │     Valida parâmetros
 │     - Tratamento de erros HTTP      │     Retorna respostas JSON
 └──────────────┬──────────────────────┘
@@ -60,9 +126,6 @@ O projeto segue uma arquitetura em camadas bem definida, garantindo separação 
 │     - Definição de entidades         │     Relacionamentos
 │     - Migrations com Alembic         │
 └──────────────────────────────────────┘
-
-
-
 ```
 
 ### Padrões de Projeto Implementados
@@ -106,7 +169,7 @@ O projeto segue uma arquitetura em camadas bem definida, garantindo separação 
 
 ---
 
-##  Stack Tecnológico
+## Stack Tecnológico
 
 ### Backend Framework
 
@@ -170,7 +233,7 @@ O projeto segue uma arquitetura em camadas bem definida, garantindo separação 
 
 ---
 
-##  Pré-requisitos
+## Pré-requisitos
 
 Antes de começar, certifique-se de ter instalado:
 
@@ -182,13 +245,13 @@ Antes de começar, certifique-se de ter instalado:
 
 ---
 
-##  Instalação e Configuração
+## Instalação e Configuração
 
 ### 1. Clone o repositório
 
 ```bash
 git clone <repository-url>
-cd back
+cd gestao_conhecimento_back
 ```
 
 ### 2. Crie um ambiente virtual
@@ -216,7 +279,6 @@ cp .env_example .env
 
 Edite o arquivo `.env` com suas configurações (veja seção [Variáveis de Ambiente](#-variáveis-de-ambiente)).
 
-
 ### 5. Inicialize o usuário administrador (opcional)
 
 ```bash
@@ -237,13 +299,13 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 docker-compose up -d
 ```
 
-### 8. Inicie o worker Celery (para tarefas assíncronas)
+### 7. Inicie o worker Celery (para tarefas assíncronas)
 
 ```bash
 celery -A api.utils.celery_app worker --loglevel=info -Q scraping --concurrency=1
 ```
 
-### 9. Acesse a documentação da API
+### 8. Acesse a documentação da API
 
 Após iniciar a aplicação, acesse:
 
@@ -253,9 +315,64 @@ Após iniciar a aplicação, acesse:
 
 ---
 
-##  Funcionalidades Principais
+## Funcionalidades Detalhadas
 
-### 1. Sistema de Autenticação JWT
+### 1. Sistema de Extração e Processamento de Links
+
+#### Web Scraping Inteligente
+
+- **Scraping Assíncrono**: Processamento em background com Celery para não bloquear a API
+- **Selenium Headless**: Navegação automática de páginas dinâmicas (JavaScript)
+- **Anti-detecção**: User agents rotativos para evitar bloqueios
+- **Extração de Metadados**: Open Graph, títulos, descrições e outras informações estruturadas
+- **Resumo com IA**: Geração automática de resumos inteligentes com GPT-4o-mini
+
+#### Processo de Extração
+
+1. O usuário envia um link através da API
+2. O sistema valida o link e cria um registro no banco
+3. Uma tarefa assíncrona é disparada para processar o link
+4. O Selenium acessa a página e extrai o conteúdo
+5. O texto é limpo e processado
+6. Um resumo é gerado usando IA
+7. O conteúdo é preparado para ingestão no RAG
+
+### 2. Sistema RAG (Retrieval Augmented Generation)
+
+#### Ingestão de Conteúdo
+
+- **Chunking Inteligente**: Divisão do texto em pedaços otimizados para preservar contexto
+- **Embeddings Vetoriais**: Geração de embeddings com OpenAI (text-embedding-ada-002)
+- **Armazenamento Vetorial**: Armazenamento no PostgreSQL com extensão pgvector
+- **Índices Otimizados**: Índices IVFFlat para busca por similaridade rápida
+
+#### Consultas ao RAG
+
+- **Busca Semântica**: Consultas por similaridade usando embeddings
+- **Contexto Preservado**: Manutenção do contexto original nas respostas
+- **Respostas Contextuais**: O chat utiliza o conteúdo extraído para responder perguntas
+- **Precisão**: Respostas baseadas no conteúdo real da página, não em conhecimento genérico
+
+### 3. Chat Inteligente
+
+O sistema de chat permite que o usuário:
+
+- Faça perguntas sobre o conteúdo extraído de qualquer link processado
+- Receba respostas precisas baseadas no contexto original
+- Consulte múltiplos links processados anteriormente
+- Obtenha informações específicas sem precisar reler o conteúdo completo
+
+**Exemplo de uso:**
+
+```
+Usuário: "Qual é o resumo deste artigo?"
+Sistema: [Responde com o resumo gerado pela IA]
+
+Usuário: "Quais são os principais pontos mencionados?"
+Sistema: [Responde baseado no conteúdo extraído e indexado no RAG]
+```
+
+### 4. Sistema de Autenticação JWT
 
 - **Login com OAuth2**: Autenticação padrão OAuth2 Password Flow
 - **Access Tokens**: Tokens de curta duração (configurável)
@@ -263,29 +380,13 @@ Após iniciar a aplicação, acesse:
 - **Recuperação de Senha**: Sistema completo com tokens temporários e emails
 - **Hash de Senhas**: Bcrypt para segurança
 
-### 2. Sistema de Permissões
+### 5. Sistema de Permissões
 
 - **Permissões baseadas em roles**: `LINK`, `RAG`, `ADMIN`
 - **Middleware de permissões**: Decorator `@require()` para proteção de endpoints
 - **Validação automática**: Verificação de permissões em cada requisição
 
-### 3. Web Scraping Inteligente
-
-- **Scraping Assíncrono**: Processamento em background com Celery
-- **Selenium Headless**: Navegação automática de páginas dinâmicas
-- **Anti-detecção**: User agents rotativos
-- **Extração de Metadados**: Open Graph, títulos, descrições
-- **Resumo com IA**: Geração automática de resumos com GPT-4o-mini
-
-### 4. RAG (Retrieval Augmented Generation)
-
-- **Ingestão de Conteúdo**: Chunking inteligente de textos
-- **Embeddings Vetoriais**: Geração de embeddings com OpenAI
-- **Busca Semântica**: Consultas por similaridade usando pgvector
-- **Índices Otimizados**: IVFFlat para performance
-- **Contexto Preservado**: Manutenção de contexto original nas respostas
-
-### 5. CRUD Genérico Avançado
+### 6. CRUD Genérico Avançado
 
 - **Operações Padrão**: Create, Read, Update, Delete
 - **Soft Delete**: Exclusão lógica com possibilidade de restore
@@ -296,7 +397,7 @@ Após iniciar a aplicação, acesse:
 - **Includes Relacionais**: Carregamento otimizado de relacionamentos
 - **Select Fields**: Seleção de campos específicos na resposta
 
-### 6. Sistema de Email
+### 7. Sistema de Email
 
 - **Templates HTML**: Sistema de templates reutilizáveis
 - **Múltiplos Tipos**: Password reset, welcome, verification, notification, reminder
@@ -305,51 +406,7 @@ Após iniciar a aplicação, acesse:
 
 ---
 
-##  Destaques Técnicos
-
-### 1. Arquitetura Escalável
-
-- **Separação de Responsabilidades**: Cada camada tem uma responsabilidade única
-- **Baixo Acoplamento**: Módulos independentes e testáveis
-- **Alta Coesão**: Funcionalidades relacionadas agrupadas
-
-### 2. Performance
-
-- **Queries Otimizadas**: Uso de índices, eager loading seletivo
-- **Processamento Assíncrono**: Celery para tarefas pesadas
-- **Cache com Redis**: Redução de carga no banco de dados
-- **Busca Vetorial Otimizada**: Índices IVFFlat para RAG
-
-### 3. Segurança
-
-- **JWT com Refresh Tokens**: Autenticação segura e renovável
-- **Hash de Senhas**: Bcrypt com salt automático
-- **Validação de Entrada**: Pydantic para validação de dados
-- **SQL Injection Prevention**: SQLAlchemy ORM previne injeções
-- **CORS Configurado**: Controle de origens permitidas
-
-### 4. Manutenibilidade
-
-- **Código DRY**: Base classes genéricas eliminam duplicação
-- **Type Hints**: Tipagem completa para melhor IDE support
-- **Documentação Automática**: Swagger/OpenAPI gerado automaticamente
-- **Migrations Versionadas**: Controle de versão do schema do banco
-
-### 5. Testabilidade
-
-- **Dependency Injection**: Facilita criação de mocks
-- **Separação de Camadas**: Cada camada pode ser testada isoladamente
-- **Base Classes**: Testes genéricos para operações CRUD
-
-### 6. Extensibilidade
-
-- **Fácil Adição de Entidades**: Herdar de base classes é suficiente
-- **Sistema de Permissões Extensível**: Fácil adicionar novas permissões
-- **Templates de Email Extensíveis**: Adicionar novos templates é simples
-
----
-
-## 🔌API Endpoints
+## API Endpoints
 
 ### Autenticação (`/api/v1/conta`)
 
@@ -370,12 +427,12 @@ Após iniciar a aplicação, acesse:
 
 ### WebLinks (`/api/v1/web_links`)
 
-- `GET /` - Listar WebLinks
-- `GET /{id}` - Obter WebLink por ID
-- `POST /` - Criar WebLink (dispara scraping assíncrono)
+- `GET /` - Listar WebLinks processados
+- `GET /{id}` - Obter WebLink por ID (inclui resumo e conteúdo)
+- `POST /` - Criar WebLink e iniciar processamento (envia link para scraping)
 - `PUT /{id}` - Atualizar WebLink
 - `DELETE /{id}` - Deletar WebLink
-- `POST /{id}/ask` - Fazer pergunta ao RAG sobre o conteúdo
+- `POST /{id}/ask` - **Fazer pergunta ao RAG sobre o conteúdo extraído** (Chat)
 
 ### Health Check
 
@@ -385,12 +442,12 @@ Após iniciar a aplicação, acesse:
 
 ---
 
-##  Variáveis de Ambiente
+## Variáveis de Ambiente
 
 Configure as seguintes variáveis no arquivo `.env`:
 
 ```env
-# OpenAI
+# OpenAI (Obrigatório para IA e RAG)
 OPENAI_API_KEY=sua_chave_openai
 EMBED_MODEL=text-embedding-ada-002
 
@@ -420,7 +477,7 @@ CELERY_RESULT_BACKEND=redis://localhost:6379/0
 
 ---
 
-##  Migrações de Banco de Dados
+## Migrações de Banco de Dados
 
 ### Criar uma nova migration:
 
@@ -450,7 +507,6 @@ alembic history
 
 ## Desenvolvimento
 
-
 ### Executar em modo desenvolvimento:
 
 ```bash
@@ -465,21 +521,31 @@ O `--reload` habilita auto-reload quando arquivos são modificados.
 
 ### Performance do RAG
 
-- O sistema usa **chunking inteligente** para dividir textos longos
+- O sistema usa **chunking inteligente** para dividir textos longos preservando contexto
 - **Batch processing** de embeddings para otimizar chamadas à API OpenAI
 - **Índices IVFFlat** no PostgreSQL para busca vetorial rápida
+- **Cache de embeddings** para evitar reprocessamento
 
 ### Web Scraping
 
 - **Timeout configurável** para evitar travamentos
 - **Limpeza automática** de processos Chrome órfãos
 - **Retry logic** para lidar com falhas temporárias
+- **Suporte a páginas dinâmicas** com JavaScript através do Selenium
 
 ### Segurança
 
 - **Rate limiting** recomendado para produção (não implementado neste projeto base)
 - **HTTPS obrigatório** em produção
 - **Validação de tokens** em cada requisição autenticada
+- **Validação de URLs** antes do scraping para evitar SSRF
+
+### Fluxo Completo de Uso
+
+1. **Autenticação**: Usuário faz login e obtém token JWT
+2. **Envio de Link**: Usuário envia POST para `/api/v1/web_links` com a URL
+3. **Processamento**: Sistema processa o link em background (scraping → resumo → RAG)
+4. **Consulta**: Usuário pode consultar o status do processamento
+5. **Chat**: Após processamento, usuário pode fazer perguntas via `POST /api/v1/web_links/{id}/ask`
 
 ---
-
