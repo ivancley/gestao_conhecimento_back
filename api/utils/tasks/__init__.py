@@ -1,0 +1,1 @@
+# Módulo de tarefas assíncronas do Celery 
